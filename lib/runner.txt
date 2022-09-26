@@ -1,0 +1,123 @@
+flutter run -d chrome --release --no-sound-null-safety --web-port 5000
+
+flutter run -d chrome web-server --release --no-sound-null-safety --web-hostname localhost --web-port 5000
+
+flutter run -d chrome --release --no-sound-null-safety --web-port=8080 --web-hostname=127.0.0.1
+
+flutter build web --release --no-sound-null-safety
+
+firebase init
+
+firebase hosting:channel:deploy seniorman
+
+Platform  Firebase App Id
+web       1:642464167886:web:b24e029a70562fba7b9d9f
+android   1:642464167886:android:fef5ef8f5de46f8d7b9d9f
+ios       1:642464167886:ios:0de9b28fe835bd677b9d9f
+macos     1:642464167886:ios:0de9b28fe835bd677b9d9f
+
+
+//calls the Auth Helper if all the textforms passess it's validation
+                    AuthenticationHelper()
+                    .signUp(email: email!, password: password!)
+                    .then((result) {
+                      if (result == null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeBody())
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.white,
+                            elevation: 1,  //0
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))
+                            ),
+                            content: Text(
+                              result,
+                              style: TextStyle(fontSize: 16, color: Colors.black),
+                            ),
+                          )
+                        );
+                      }
+                    }
+
+
+
+                    //firebase sign signUp
+                    .then((result) {
+                      if (result == null) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeBody())
+                        );
+                      }
+                      else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.white,
+                            elevation: 1,  //0
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))
+                            ),
+                            content: Text(
+                              result,
+                              style: TextStyle(fontSize: 16, color: Colors.black),
+                            ),
+                          )
+                        );
+                      }
+                    
+
+
+
+
+Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(CupertinoIcons.bell_solid, color: Colors.black),
+                        SizedBox(width: 10),
+                        Text(
+                          "Notifications",
+                          style: GoogleFonts.belleza(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 40),
+                    Text(
+                      "Notifications will appear here.",
+                      style: GoogleFonts.belleza(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)
+                    ),
+                    SizedBox(height: 10),
+                    //wrap with elevated button with "align"
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: ElevatedButton(
+                    onPressed: () {messageUs();}, 
+                    child: Text(
+                      'MAIL US',
+                      style: GoogleFonts.belleza(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12)
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      //shadowColor: Colors.white,
+                      //surfaceTintColor: Colors.white,
+                      primary: Colors.white,
+                      onPrimary: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))
+                      ),
+                      side: BorderSide(
+                        color: Colors.black,
+                        style: BorderStyle.solid
+                      )
+                    ),
+                  ),
+                )
+                  ],
+                ),
