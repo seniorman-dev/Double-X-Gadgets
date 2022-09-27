@@ -1,0 +1,10 @@
+^C:\FLUTTER_PROJECTS\SECONDPROJECT\ELOKA_APP\BUILD\WINDOWS\CMAKEFILES\A4F043F9C964449FB6A25F260B028515\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/flutter_projects/secondproject/eloka_app/windows -BC:/flutter_projects/secondproject/eloka_app/build/windows --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/flutter_projects/secondproject/eloka_app/build/windows/eloka_app.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
