@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eloka_app/FirebaseAuth/FirebaseSignUp.dart';
 import 'package:eloka_app/HomeScreen/drawer_items.dart';
 import 'package:eloka_app/defaultColor.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,17 +14,17 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class NavigationDrawer extends StatefulWidget {
-  const NavigationDrawer({Key? key}) : super(key: key);
+  NavigationDrawer({Key? key,}) : super(key: key);
+
 
   @override
   State<NavigationDrawer> createState() => _NavigationDrawerState();
 }
 
 class _NavigationDrawerState extends State<NavigationDrawer> {
-
-  //thanks to yohannes mike video on YT
-  //final user = FirebaseAuth.instance.currentUser!;
-
+  
+  //Firebase Auth directly
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +35,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           padding: const EdgeInsets.fromLTRB(24, 80, 24, 0),
           child: Column(
             children: [
-              headerWidget(),
-              const SizedBox(height: 40,),
-              Text('', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
-              const SizedBox(height: 15), 
-              //Text('email: ${user.email!}'),         
-              Text('Jetify',  style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
+              //headerWidget(),
+              //const SizedBox(height: 40,),
+              firebaseUserWidget(),
+              const SizedBox(height: 15),
+              //Text('email: ${user.email!}'),  //for firebase       
+              Text(user.email!, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {},
@@ -74,7 +76,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               const SizedBox(height: 20,),
               GestureDetector(
                 onTap: () {
-                  //AuthenticationHelper().signOut(context);
+                  AuthenticationHelper().signOut(context);
                 },
                 child: DrawerItems(
                   name: 'Sign Out',
@@ -101,6 +103,65 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         ), 
       ]
     );
+  }
+  
+  //firebase user widget
+  Widget firebaseUserWidget() {
+    return FutureBuilder<Users?>(
+      future: readUser(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong! ${snapshot.error}', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,));
+        }
+        else if (snapshot.hasData) {
+          final users = snapshot.data!;
+          // ignore: unnecessary_null_comparison
+          return users == null ? Text('User not found!', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)) : buildUser(users);
+        }
+        else {
+          return Center(
+            child: CircularProgressIndicator(color: Colors.white)
+          );
+        }
+      },
+    );
+  }
+  Widget buildUser(Users users) => Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    //crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(users.user_name, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
+    ],
+  );
+
+  
+  //CRUD: Firebase createUser Method for creating user's name in Cloud Firestore
+  Future createUser(Users user) async{
+    ///Reference to document
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    user.id = docUser.id;
+    final json = user.toJson();
+
+    ///Create documnet and write data to Firebase
+    await docUser.set(json);
+  }
+
+  //CRUD: Firebase readUsers method for reading all users details as a list at once in app. *not needed atm
+  Stream<List<Users>> readUsers() => FirebaseFirestore.instance
+  .collection('users')
+  .snapshots()
+  .map((snapshot) => 
+  snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
+
+  //CRUD: Firebase readUser method that particularly reads a sinngle user details in app
+  Future<Users?> readUser() async{
+    ///Reference to document (get single document ID)
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    final snapshot = await docUser.get();
+
+    if (snapshot.exists) {
+      return Users.fromJson(snapshot.data()!);
+    }
   }
 
 
@@ -241,3 +302,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   }
 
 }
+
+
+
+

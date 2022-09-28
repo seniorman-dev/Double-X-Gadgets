@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
+import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 import '../defaultColor.dart';
 
@@ -24,7 +25,8 @@ import '../defaultColor.dart';
 
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key,}) : super(key: key);
+  //Users users;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -76,12 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
      
     var ccart = Provider.of<CartModel>(context);  //w.r.t. provider for cart
-
+    
+    //SQL
+    
     return Scaffold(
       key: _globalKey,
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
-      drawer: NavigationDrawer(),
+      drawer: NavigationDrawer(), 
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,  //Colors.transparent, 

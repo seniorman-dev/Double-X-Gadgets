@@ -32,9 +32,9 @@ GoogleSignIn googleSignIn = GoogleSignIn(
 void main() async {  //async
   WidgetsFlutterBinding.ensureInitialized();
   //initializing firebase in my app
-  //await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   //initializing the Paystack API in my app  
-  //await PaystackClient.initialize(publicKey);
+  await PaystackClient.initialize(publicKey);
   // initializing google admob in my app
   //await MobileAds.instance.initialize();  //admob doesn't work for web
   runApp(
@@ -69,7 +69,7 @@ class _ApplicationState extends State<Application> {
       ],
       child: GetMaterialApp(   //MaterialApp  
         debugShowCheckedModeBanner: false, 
-        home: HomeScreen(),  //dFirebaseCheck(),
+        home: FirebaseCheck(),
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.system,
         // Theme mode depends on device settings at the beginning     

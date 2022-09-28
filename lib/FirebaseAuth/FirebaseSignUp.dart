@@ -1,11 +1,13 @@
 import 'package:eloka_app/FirebaseAuth/AuthenticationHelper.dart';
 import 'package:eloka_app/HomeScreen/home_screen.dart';
+import 'package:eloka_app/HomeScreen/navigation_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eloka_app/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
@@ -145,7 +147,7 @@ class _SignupFormState extends State<SignupForm> {
         children: [
           // name
           TextFormField(
-            //initialValue: user_name,
+            //`1initialValue: user_name,
             controller: fullNameController,
             autocorrect: true,
             inputFormatters: [],
@@ -351,6 +353,13 @@ class _SignupFormState extends State<SignupForm> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async{
+                //final user_email = emailController.text;
+                //add more controllers if needed
+                final user = Users(
+                  user_name: fullNameController.text,
+                );
+                createUser(user);
+
                 //Fluttertoast();
                 print('Successful');
                   //Response to button press
@@ -390,5 +399,63 @@ class _SignupFormState extends State<SignupForm> {
       ),
     );
   }
+  
+  
+  //CRUD: Firebase createUser Method for creating user's name in Cloud Firestore
+  Future createUser(Users users) async {
+    ///Reference to document
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    users.id = docUser.id;
+    final json = users.toJson();
+
+    ///Create documnet and write data to Firebase
+    await docUser.set(json);
+  }
+
+
+  //CRUD: Firebase readUsers method for reading all users details as a list at once in app. *not needed atm
+  Stream<List<Users>> readUsers() => FirebaseFirestore.instance
+  .collection('users')
+  .snapshots()
+  .map((snapshot) => 
+  snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
+
+  //CRUD: Firebase readUser method that particularly reads a sinngle user details in app
+  Future<Users?> readUser() async{
+    ///Reference to document (get single document ID)
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    final snapshot = await docUser.get();
+
+    if (snapshot.exists) {
+      return Users.fromJson(snapshot.data()!);
+    }
+  }
+
+
+  //CRUD: Firebase "Update and Delete" calls are only exclusive to me
 
 }
+
+
+
+//Firebase User model
+class Users {  //if you add
+  String id;
+  final String user_name;
+  Users({this.id = '', required this.user_name});
+
+  //toJson method for 'Users' model
+  Map<String, dynamic> toJson() => {  //then add
+    'id': id,
+    'name': user_name
+  };
+
+  //fromJson method for 'Users' model
+ static Users fromJson(Map<String, dynamic> json) =>  //then add again!
+ Users(
+  id: json['id'],
+  user_name: json['name']
+ );
+
+}
+
