@@ -4,7 +4,7 @@ import 'package:eloka_app/Product.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CartModel extends ChangeNotifier {
+class CartModel extends ChangeNotifier { //GetxController
   //empty list "_products" and it's getter
   final List<Product> _products = [];
   List<Product> get cartItems {
@@ -52,7 +52,7 @@ class CartModel extends ChangeNotifier {
     print('saved SetString: ${item.title}');
     print('saved getString: ${item.title}');
     if (_products.contains(item)) {
-      Get.snackbar(item.title, "is already added to your cart!");
+      Get.snackbar(item.title, "is already added to your cart!", duration: Duration(seconds: 3), isDismissible: false, colorText: Colors.black, borderRadius: 10, backgroundColor: Colors.white, snackPosition: SnackPosition.BOTTOM, dismissDirection: DismissDirection.down);
     } else {
       _products.add(item);
       _totalPrice += item.amount;

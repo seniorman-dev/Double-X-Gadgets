@@ -10,6 +10,9 @@ import 'package:eloka_app/CartFolder/cart_model.dart';
 import 'package:eloka_app/defaultColor.dart';
 import 'package:provider/provider.dart';
 
+
+
+
 class Cart extends StatefulWidget {
 
   const Cart({Key? key,}) : super(key: key);
@@ -19,17 +22,19 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+  //Get.find() will be here ****Get.put()
   int sum = 0;
 
   @override
   Widget build(BuildContext context) {
-    var ccart = Provider.of<CartModel>(context,);  //w.r.t. provider for cart
+    var ccart = Provider.of<CartModel>(context);  //w.r.t. provider for cart
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed:() {
             Navigator.pop(context);  // or similarly, "Navigator.of(context).pop()"
@@ -78,7 +83,7 @@ class _CartState extends State<Cart> {
                                 onPressed: () {
                                   setState(() {
                                     if (ccart.cartItems[index].quantity <= 1) {
-                                      Get.snackbar(ccart.cartItems[index].title, "removed from cart!",duration: Duration(seconds: 2), isDismissible: true);
+                                      Get.snackbar(ccart.cartItems[index].title, "removed from cart!",duration: Duration(seconds: 2), isDismissible: true, colorText: Colors.black, borderRadius: 10);
                                       ccart.remove(ccart.cartItems[index]);
                                     }
                                     else {
@@ -97,7 +102,7 @@ class _CartState extends State<Cart> {
                                 onPressed: () {
                                   setState(() {
                                     if (ccart.cartItems[index].quantity >= 5) {
-                                      Get.snackbar("Maximum Increase", "you can't surpass this item quantity",duration: Duration(seconds: 2), isDismissible: true);
+                                      Get.snackbar("Maximum Increase", "you can't surpass this item quantity",duration: Duration(seconds: 2), isDismissible: true, colorText: Colors.black, borderRadius: 10);
                                     }
                                     else {
                                       ccart.cartItems[index].quantity++;
@@ -110,7 +115,7 @@ class _CartState extends State<Cart> {
                                 icon: Icon(CupertinoIcons.delete_solid, color: defaultColor,),
                                 onPressed: () {
                                   ccart.remove(ccart.cartItems[index]);
-                                  //Get.snackbar(ccart.cartItems[index].title, "removed from cart!",duration: Duration(seconds: 2), isDismissible: true);
+                                  Get.snackbar(ccart.cartItems[index].title, "removed from cart!",duration: Duration(seconds: 2), isDismissible: true, colorText: Colors.black, borderRadius: 10);
                                 },
                               ),
                             ],

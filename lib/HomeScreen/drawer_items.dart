@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 class DrawerItems extends StatelessWidget {
   const DrawerItems({Key? key, required this.name, required this.icon,}) : super(key: key);
-
   final String  name;
   final IconData icon;
   //final VoidCallback onPressed;

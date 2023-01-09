@@ -18,7 +18,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
-import '../defaultColor.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 
@@ -41,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isSelected = false;
 
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
+  //Firebase Auth directly
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Cart()), 
-                );
+                ).then((value) => setState(() {}));
               }, 
               icon: Icon(CupertinoIcons.cart, color: Colors.black)
             ),
@@ -137,7 +140,14 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Text('Hello Chief,\nWhat Are You Shopping Today?', style: GoogleFonts.belleza(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Hello Chief,', style: GoogleFonts.nunitoSans(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+                SizedBox(height: 5),
+                Text('what are you shopping today?', style: GoogleFonts.nunitoSans(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black),)
+              ],
+            ),
           ),
           SizedBox(height: 20), //25
           //for the best deals.. i'd work on this later
@@ -167,13 +177,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         textAlign: TextAlign.start,
                         text: TextSpan(
                           text: 'Sweet Deal!\nDualSense 5 Controller',
-                          style: GoogleFonts.belleza(fontWeight: FontWeight.bold, fontSize: 23, color: Colors.black, fontStyle: FontStyle.italic)      //20
+                          style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold, fontSize: 23, color: Colors.black,)      //fontStyle: FontStyle.italic
                         ),
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: (){}, 
-                        child: Text('Buy Now'.toUpperCase(), style: GoogleFonts.belleza(fontWeight: FontWeight.bold)),
+                        child: Text('Buy Now'.toUpperCase(), style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold)),
                         style: ButtonStyle(
                           foregroundColor: MaterialStateProperty.all<Color>(defaultColor),
                           backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -192,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //create another carousel that plays videos later
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Text('Categories', style: GoogleFonts.belleza(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+            child: Text('Categories', style: GoogleFonts.nunitoSans(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
           ),
 
           //const SizedBox(height: 10),
@@ -204,74 +214,6 @@ class _HomeScreenState extends State<HomeScreen> {
           //GridView
           GridViewProduct(),                                        
         ],
-      ),
-
-      //bottom navigation bar
-      bottomNavigationBar: Container(      
-        //height: 60,  
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(35), topRight: Radius.circular(35)),
-        ),
-        child: BottomNavyBar(
-          selectedIndex: _currentIndex,
-          showElevation: true,
-          itemCornerRadius: 24,
-          curve: Curves.easeOutCirc,
-          backgroundColor: Colors.white,
-          onItemSelected: (index){
-            setState((){
-              _currentIndex = index;
-            });
-          },
-          items: <BottomNavyBarItem>[
-            BottomNavyBarItem(
-              icon: isSelected ? Icon(Icons.home) : Icon(Icons.home_filled),
-              title: TextButton(
-                child: Text('Home', style: GoogleFonts.belleza(color: Colors.black, fontWeight: FontWeight.bold),),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                },
-              ),
-              activeColor: defaultColor,
-              inactiveColor: Colors.black,
-              textAlign: TextAlign.center,
-            ),              
-            BottomNavyBarItem(
-              icon: Icon(CupertinoIcons.search,),
-              title: TextButton(
-                child: Text('Search', style: GoogleFonts.belleza(color: Colors.black, fontWeight: FontWeight.bold),),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchPage()),   //Cart(items: items)
-                  );
-                }
-              ),
-              activeColor: defaultColor,
-              inactiveColor: Colors.black,
-              textAlign: TextAlign.center,
-            ),     
-            BottomNavyBarItem(
-              icon: isSelected ? Icon(CupertinoIcons.paperplane) : Icon(CupertinoIcons.paperplane_fill),
-              title: TextButton(
-                child: Text('Payment', style: GoogleFonts.belleza(color: Colors.black, fontWeight: FontWeight.bold),),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PaystackUi()),
-                  );
-                },
-              ),
-              activeColor: defaultColor,
-              inactiveColor: Colors.black,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
       ),
     );
   }

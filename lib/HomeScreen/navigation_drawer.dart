@@ -20,7 +20,6 @@ class NavigationDrawer extends StatefulWidget {
   @override
   State<NavigationDrawer> createState() => _NavigationDrawerState();
 }
-
 class _NavigationDrawerState extends State<NavigationDrawer> {
   
   //Firebase Auth directly
@@ -35,20 +34,40 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           padding: const EdgeInsets.fromLTRB(24, 80, 24, 0),
           child: Column(
             children: [
-              //headerWidget(),
-              //const SizedBox(height: 40,),
-              firebaseUserWidget(),
-              const SizedBox(height: 15),
-              //Text('email: ${user.email!}'),  //for firebase       
-              Text(user.email!, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {},
-                child: DrawerItems(
-                  name: 'Edit Avatar',
-                  icon: CupertinoIcons.camera,
-                ),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(), //try email
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) { //AsyncSnapshot<QuerySnapshot>
+                  if(snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator(strokeWidth: 3, color: defaultColor,);
+                  }
+                  else if(snapshot.hasData) {
+                    return ListView.builder( 
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (context, index) {                                                                                                                                                                           //or equivalently use => Text(Text(snapshot.data!.docs[index]['email'], style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),                                                                                                   /////Text('email: ${user.email!}'),  //from firebase auth direct!! or simultaneously use ==>> Text(snapshot.data!.docs[index]['name'])
+                        //return UserAccountsDrawerHeader(accountName: Text(snapshot.data!.docs[index]['name'], style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)), accountEmail: Text(user.email!, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)));
+                        return Text("${snapshot.data!.docs[index]['name']} \n${snapshot.data!.docs[index]['email']}", style: GoogleFonts.nunitoSans(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,));                        
+                      }
+                    );
+                  }
+                  else {
+                    return CircularProgressIndicator(strokeWidth: 3, color: Colors.red,);
+                  }
+                },
               ),
+              //headerWidget(),
+              const SizedBox(height: 50,),       
+              /////Text('email: ${user.email!}'),  //for firebase       
+              //Text(user.email!, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
+              //const SizedBox(height: 20),
+              //GestureDetector(
+                //onTap: () {},
+                //child: DrawerItems(
+                  //name: 'Edit Avatar',
+                  //icon: CupertinoIcons.camera,
+                //),
+              //),
               //const SizedBox(height: 20,),
               //GestureDetector(
                 //onTap: () {Get.snackbar("Signed in as:", "(firebase email => #user.email!)");},
@@ -57,7 +76,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   //icon: CupertinoIcons.mail,
                 //),
               //),
-              const SizedBox(height: 20,),
+              //const SizedBox(height: 20,),
               GestureDetector(
                 onTap: () {notificationsBottomSheetFunction();},
                 child: DrawerItems(
@@ -90,7 +109,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       )
     ); 
   }
-  
 
   //header for drawer
   Widget headerWidget() {
@@ -105,65 +123,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     );
   }
   
-  //firebase user widget
-  Widget firebaseUserWidget() {
-    return FutureBuilder<Users?>(
-      future: readUser(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Something went wrong! ${snapshot.error}', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,));
-        }
-        else if (snapshot.hasData) {
-          final users = snapshot.data!;
-          // ignore: unnecessary_null_comparison
-          return users == null ? Text('User not found!', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)) : buildUser(users);
-        }
-        else {
-          return Center(
-            child: CircularProgressIndicator(color: Colors.white)
-          );
-        }
-      },
-    );
-  }
-  Widget buildUser(Users users) => Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    //crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(users.user_name, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
-    ],
-  );
-
-  
-  //CRUD: Firebase createUser Method for creating user's name in Cloud Firestore
-  Future createUser(Users user) async{
-    ///Reference to document
-    final docUser = FirebaseFirestore.instance.collection('users').doc();
-    user.id = docUser.id;
-    final json = user.toJson();
-
-    ///Create documnet and write data to Firebase
-    await docUser.set(json);
-  }
-
-  //CRUD: Firebase readUsers method for reading all users details as a list at once in app. *not needed atm
-  Stream<List<Users>> readUsers() => FirebaseFirestore.instance
-  .collection('users')
-  .snapshots()
-  .map((snapshot) => 
-  snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
-
-  //CRUD: Firebase readUser method that particularly reads a sinngle user details in app
-  Future<Users?> readUser() async{
-    ///Reference to document (get single document ID)
-    final docUser = FirebaseFirestore.instance.collection('users').doc();
-    final snapshot = await docUser.get();
-
-    if (snapshot.exists) {
-      return Users.fromJson(snapshot.data()!);
-    }
-  }
-
 
   //function for help center(makes the "help center gesture detector" open a bottom sheet). Thanks to resocoder on YT
   void bottomSheetForHelpCenterFunction() {

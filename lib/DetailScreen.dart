@@ -4,6 +4,7 @@ import 'package:eloka_app/CartFolder/cart.dart';
 import 'package:eloka_app/CartFolder/cart_model.dart';
 import 'package:eloka_app/Product.dart';
 import 'package:eloka_app/defaultColor.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class ProductDetailScreen extends StatelessWidget {
   final Product items;
   
   var index;
+  //Get.put() will be here
   
   @override
   Widget build(BuildContext context) {
@@ -135,7 +137,8 @@ class ProductDetailScreen extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     //it works courtesy of provider state management
-                    ccart.add(items);  //something has to be done here to make qty start from 1
+                    ccart.add(items); 
+                    //Get.snackbar('An Item Has Been Added To Your Cart', "you've added something to your cart!", duration: Duration(seconds: 2), isDismissible: true, colorText: Colors.black, borderRadius: 10);
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Cart()), 

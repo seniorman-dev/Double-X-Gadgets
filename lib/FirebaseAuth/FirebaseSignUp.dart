@@ -1,6 +1,8 @@
 import 'package:eloka_app/FirebaseAuth/AuthenticationHelper.dart';
 import 'package:eloka_app/HomeScreen/home_screen.dart';
 import 'package:eloka_app/HomeScreen/navigation_drawer.dart';
+import 'package:eloka_app/defaultColor.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:eloka_app/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 
 
 
@@ -46,7 +49,7 @@ class _SignupState extends State<Signup> {
           Center(
             child: Text(
               'Create Account',
-              style: GoogleFonts.belleza(fontSize: 35, color: Colors.black),
+              style: GoogleFonts.nunitoSans(fontSize: 35, color: Colors.black, fontWeight: FontWeight.bold),
             ),
           ),
 
@@ -74,7 +77,7 @@ class _SignupState extends State<Signup> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text('Login', style: GoogleFonts.belleza(fontSize: 16, color: Colors.blue)),
+                      child: Text('Login', style: GoogleFonts.belleza(fontSize: 16, color: defaultColor)),
                     )
                   ],
                 ),
@@ -106,15 +109,10 @@ class _SignupFormState extends State<SignupForm> {
   final pass = TextEditingController();  //to check for password mis-match when signing up
 
 
-  final fullNameController = TextEditingController();  //for shared preference
-  final emailController = TextEditingController();   //for shared preference
-  //final passwordController = TextEditingController();
-
-
-
-  //SharedPereferences for persisting this data
-  
-  
+  final fullNameController = TextEditingController();  
+  final emailController = TextEditingController();   
+  final passwordController = TextEditingController();
+  final passwordController2 = TextEditingController();
 
 
   @override
@@ -122,7 +120,9 @@ class _SignupFormState extends State<SignupForm> {
     //to dispose controllers after usage
     emailController.dispose();
     fullNameController.dispose();
-    //passwordController.dispose();
+    passwordController.dispose();
+    passwordController2.dispose();
+    pass.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -147,7 +147,6 @@ class _SignupFormState extends State<SignupForm> {
         children: [
           // name
           TextFormField(
-            //`1initialValue: user_name,
             controller: fullNameController,
             autocorrect: true,
             inputFormatters: [],
@@ -158,18 +157,31 @@ class _SignupFormState extends State<SignupForm> {
             decoration: InputDecoration(
               //labelStyle: ,
               //hintStyle: ,
-              labelStyle: TextStyle(color: Colors.blue),
-              labelText: 'full name',
-              prefixIcon: Icon(CupertinoIcons.person, color: Colors.blue),
-              focusedBorder: border,
-            ),
-            onChanged: (user_name) {
-              setState(() {
-                user_name = user_name;
-              });
-            },
+              labelStyle: TextStyle(color: Colors.grey),
+              labelText: 'first name',
+              prefixIcon: Icon(CupertinoIcons.person, color: defaultColor),
+              //focusedBorder: border,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: defaultColor, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+            ),           
             onSaved: (val) {
-              name = val;
+              fullNameController.text = val!;
             },
             validator: (value) {
               if (value!.isEmpty) {
@@ -185,7 +197,6 @@ class _SignupFormState extends State<SignupForm> {
 
           // email
           TextFormField(
-            //initialValue: user_email,
             controller: emailController,
             autocorrect: true,
             inputFormatters: [],
@@ -196,10 +207,28 @@ class _SignupFormState extends State<SignupForm> {
             decoration: InputDecoration(
               //labelStyle: ,
               //hintStyle: ,
-              labelStyle: TextStyle(color: Colors.blue),
-              prefixIcon: Icon(CupertinoIcons.mail, color: Colors.blue),
+              labelStyle: TextStyle(color: Colors.grey),
+              prefixIcon: Icon(CupertinoIcons.mail, color: defaultColor),
               labelText: 'example@domain.com',
-              focusedBorder: border,
+              //focusedBorder: border,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: defaultColor, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
             ),
             validator: (value) {
               if (value!.isEmpty) {
@@ -207,13 +236,11 @@ class _SignupFormState extends State<SignupForm> {
               }
               return null;
             },
-            onChanged: (user_name) {
-              setState(() {
-                
-              });
-            },
+            //onChanged: (user_name) {
+              //setState(() {});
+            //},
             onSaved: (val) {
-              email = val;
+              emailController.text = val!;
             },
             keyboardType: TextInputType.emailAddress,
           ),
@@ -234,10 +261,28 @@ class _SignupFormState extends State<SignupForm> {
             decoration: InputDecoration(
               //labelStyle: ,
               //hintStyle: ,
-              labelStyle: TextStyle(color: Colors.blue),
+              labelStyle: TextStyle(color: Colors.grey),
               labelText: 'password',
-              prefixIcon: Icon(CupertinoIcons.padlock, color: Colors.blue),
-              focusedBorder: border,
+              prefixIcon: Icon(CupertinoIcons.padlock, color: defaultColor),
+              //focusedBorder: border,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: defaultColor, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
               suffixIcon: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -246,11 +291,12 @@ class _SignupFormState extends State<SignupForm> {
                 },
                 child: Icon(
                   _obscureText ? Icons.visibility : Icons.visibility_off,     //Icons.visibility_off : Icons.vissibility
+                  color: defaultColor,
                 ),
               ),
             ),
             onSaved: (val) {
-              password = val;
+              pass.text = val!;
             },
             obscureText: !_obscureText,
             validator: (value) {
@@ -273,13 +319,31 @@ class _SignupFormState extends State<SignupForm> {
             enableInteractiveSelection: true,
             cursorColor: Colors.black,
             style: TextStyle(color: Colors.black),
-            controller: pass,
+            controller: passwordController,
             decoration: InputDecoration(
-              labelStyle: TextStyle(color: Colors.blue),
+              labelStyle: TextStyle(color: Colors.grey),
               //hintStyle: ,
               labelText: 'confirm password',
-              prefixIcon: Icon(CupertinoIcons.padlock, color: Colors.blue),
-              focusedBorder: border,
+              prefixIcon: Icon(CupertinoIcons.padlock, color: defaultColor),
+              //focusedBorder: border,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: defaultColor, width: 2.0),
+                borderRadius: BorderRadius.all(
+                  const Radius.circular(30.0),
+                ),
+              ),
               ///
               suffixIcon: GestureDetector(
                 onTap: () {
@@ -289,11 +353,12 @@ class _SignupFormState extends State<SignupForm> {
                 },
                 child: Icon(
                   _obscureText ? Icons.visibility: Icons.visibility_off,     //Icons.visibility_off : Icons.vissibility
+                  color: defaultColor,
                 ),
               ),
             ),
             onSaved: (val) {
-              password = val;
+              passwordController.text = val!;
             },
             obscureText: !_obscureText,
             //obscureText: true,
@@ -353,109 +418,47 @@ class _SignupFormState extends State<SignupForm> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async{
-                //final user_email = emailController.text;
-                //add more controllers if needed
-                final user = Users(
-                  user_name: fullNameController.text,
-                );
-                createUser(user);
-
                 //Fluttertoast();
-                print('Successful');
-                  //Response to button press
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    //calls the Auth Helper if all the textforms passess it's validation
-                    AuthenticationHelper()
-                    .signUp(email: email!, password: password!)
+                //Response to button press
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  //calls the Auth Helper if all the textforms passess it's validation
+                  AuthenticationHelper()
+                    .signUp(email: emailController.text.trim(), password: passwordController.text.trim())
                     .then((result) {
-                      Navigator.pushReplacement(
+                      /*Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => HomeScreen())
-                      );             
-                    }
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                //shadowColor: Colors.white,
-                foregroundColor: Colors.white, 
-                backgroundColor: Colors.white,
-                //surfaceTintColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                  side: BorderSide(
-                    color: Colors.black,
-                    style: BorderStyle.solid
+                      );*/
+                      //Get.snackbar('Your Account Has Been Created', "registration successful!", duration: Duration(seconds: 3), isDismissible: true, colorText: Colors.black, borderRadius: 10);
+                      print('User Registered Successfully');
+                      //cloud firestore database for creating new user
+                      final user = FirebaseAuth.instance.currentUser!;
+                      FirebaseFirestore.instance.collection('users').add({'name': fullNameController.text, 'email': emailController.text, 'uid': user.uid, 'password' : pass.text});                          
+                      }
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  //shadowColor: Colors.white,
+                  foregroundColor: Colors.black, 
+                  backgroundColor: Colors.black,
+                  //surfaceTintColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    /*side: BorderSide(
+                      color: Colors.black,
+                      style: BorderStyle.solid
+                    )*/
                   )
-                )
-              ),
-              child: Text(
-                'Create Account', style: GoogleFonts.belleza(fontSize: 20, color: Colors.black),
+                ),
+                child: Text(
+                  'Create Account', style: GoogleFonts.nunitoSans(fontSize: 20, color: Colors.white),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
-  
-  
-  //CRUD: Firebase createUser Method for creating user's name in Cloud Firestore
-  Future createUser(Users users) async {
-    ///Reference to document
-    final docUser = FirebaseFirestore.instance.collection('users').doc();
-    users.id = docUser.id;
-    final json = users.toJson();
-
-    ///Create documnet and write data to Firebase
-    await docUser.set(json);
-  }
-
-
-  //CRUD: Firebase readUsers method for reading all users details as a list at once in app. *not needed atm
-  Stream<List<Users>> readUsers() => FirebaseFirestore.instance
-  .collection('users')
-  .snapshots()
-  .map((snapshot) => 
-  snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
-
-  //CRUD: Firebase readUser method that particularly reads a sinngle user details in app
-  Future<Users?> readUser() async{
-    ///Reference to document (get single document ID)
-    final docUser = FirebaseFirestore.instance.collection('users').doc();
-    final snapshot = await docUser.get();
-
-    if (snapshot.exists) {
-      return Users.fromJson(snapshot.data()!);
-    }
-  }
-
-
-  //CRUD: Firebase "Update and Delete" calls are only exclusive to me
-
 }
-
-
-
-//Firebase User model
-class Users {  //if you add
-  String id;
-  final String user_name;
-  Users({this.id = '', required this.user_name});
-
-  //toJson method for 'Users' model
-  Map<String, dynamic> toJson() => {  //then add
-    'id': id,
-    'name': user_name
-  };
-
-  //fromJson method for 'Users' model
- static Users fromJson(Map<String, dynamic> json) =>  //then add again!
- Users(
-  id: json['id'],
-  user_name: json['name']
- );
-
-}
-

@@ -16,7 +16,7 @@ class GridViewProduct extends StatelessWidget{
       crossAxisCount: 2,
       childAspectRatio: 0.9,
       shrinkWrap: true,
-      physics: ClampingScrollPhysics(),
+      physics: BouncingScrollPhysics(),
       padding: const EdgeInsets.all(5),
       children:  Product.items.map((items) => Container(  //the error is coming from here
         decoration: BoxDecoration(  

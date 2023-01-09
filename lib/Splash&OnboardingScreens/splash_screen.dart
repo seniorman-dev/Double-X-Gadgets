@@ -1,8 +1,8 @@
-import 'package:eloka_app/Splash&OnboardingScreens/onboarding_screen.dart';
+import 'package:eloka_app/FirebaseAuth/FirebaseLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:eloka_app/FirebaseAuth/FirebaseLogin.dart';
+
 
 
 class SplashScreen extends StatefulWidget {
@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           children: [
             const SizedBox(height: 60),  //40
-            Image.asset('asset/images/sochi_logo.png',),
+            Image.asset('asset/images/logo.png',),
             const SizedBox(height: 20),
             //Text(
               //'Double X Gadgets',

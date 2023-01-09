@@ -216,17 +216,14 @@ class _SearchPageState extends State<SearchPage> {
       backgroundColor: Colors.white,   //Colors.white,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,  //Colors.white, 
-        leading: IconButton(
+        backgroundColor: Colors.white,  //Colors.white,
+        automaticallyImplyLeading: false, 
+        /*leading: IconButton(
           onPressed: () {
-            //Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()), 
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(CupertinoIcons.back, color: Colors.black),
-        ),
+        ),*/
         actions: [
           IconButton(
             onPressed: () {
@@ -253,7 +250,7 @@ class _SearchPageState extends State<SearchPage> {
             cursorColor: Colors.black,
             style: TextStyle(color: Colors.black),
             onChanged: (value) {
-              // Applied 'setState' to invoke changes  //error coming from here
+              // Applied 'setState' to invoke changes  
               setState(() {
                 //suggestionsOnSearch //certified
                 suggestionsOnSearch = suggestions.where((element) => element.title.toLowerCase().contains(value.toLowerCase())).toList();
@@ -295,7 +292,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ) :ListView.builder(
         physics: BouncingScrollPhysics(),
-        itemCount: textController!.text.isNotEmpty? suggestionsOnSearch.length :suggestionsOnSearch.length, //certified  //suggestions.length,
+        itemCount: textController!.text.isNotEmpty? suggestionsOnSearch.length : 0, //certified  //:suggestionsOnSearch.length,
         itemBuilder: (context, index) {
           return Card(
             color: Colors.white,
@@ -316,7 +313,7 @@ class _SearchPageState extends State<SearchPage> {
               subtitle: Text("N${suggestionsOnSearch[index].amount.toString()}", style: GoogleFonts.belleza(color: Colors.black,)),
               leading: Image.asset(suggestionsOnSearch[index].image),
               trailing: IconButton(
-                icon: Icon(CupertinoIcons.cart_fill, color: defaultColor),
+                icon: Icon(CupertinoIcons.cart_fill_badge_plus, color: defaultColor),
                 onPressed: () {
                   ccart.add(suggestionsOnSearch[index]); //suggestions  //certified
                   Navigator.push(

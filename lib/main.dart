@@ -1,5 +1,8 @@
 import 'package:eloka_app/FirebaseAuth/FirebaseLogin.dart';
+import 'package:eloka_app/HomeScreen/bottom_nav_bar.dart';
 import 'package:eloka_app/HomeScreen/home_screen.dart';
+import 'package:eloka_app/Splash&OnboardingScreens/splash_2.dart';
+import 'package:eloka_app/Splash&OnboardingScreens/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart'; 
 import 'package:flutter/material.dart';
@@ -69,7 +72,7 @@ class _ApplicationState extends State<Application> {
       ],
       child: GetMaterialApp(   //MaterialApp  
         debugShowCheckedModeBanner: false, 
-        home: FirebaseCheck(),
+        home: FirebaseCheck(),  //HomeScreen(),
         darkTheme: ThemeData.dark(),
         themeMode: ThemeMode.system,
         // Theme mode depends on device settings at the beginning     
@@ -77,6 +80,28 @@ class _ApplicationState extends State<Application> {
     ); 
   }
 }
+
+
+/*class FirebaseCheck extends StatelessWidget {
+  const FirebaseCheck({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if(snapshot.hasData) {
+            return SplashScreen2(); //navigates to home screen
+          }
+          else {
+            return SplashScreen(); ////navigates to login screen        
+          }
+        }
+      )
+    );
+  }
+}*/
 
 
 class FirebaseCheck extends StatelessWidget {
@@ -88,11 +113,17 @@ class FirebaseCheck extends StatelessWidget {
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if(snapshot.hasData) {
-            return HomeScreen(); 
+          if(snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator(strokeWidth: 3, color: Colors.purpleAccent));
+          }
+          else if(snapshot.hasData) {
+            return BottomNavBar(); //
+          }
+          else if (snapshot.hasError) {
+            return Center(child: CircularProgressIndicator(strokeWidth: 3, color: Colors.red));
           }
           else {
-            return  Login();  //SplashScreen();          
+            return Login(); //      
           }
         }
       )

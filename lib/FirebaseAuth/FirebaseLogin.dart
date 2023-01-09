@@ -1,12 +1,15 @@
 import 'package:eloka_app/FirebaseAuth/AuthenticationHelper.dart';
 import 'package:eloka_app/FirebaseAuth/FirebaseSignUp.dart';
 import 'package:eloka_app/FirebaseAuth/ResetPassword.dart';
+import 'package:eloka_app/HomeScreen/bottom_nav_bar.dart';
 import 'package:eloka_app/HomeScreen/home_screen.dart';
+import 'package:eloka_app/defaultColor.dart';
 import 'package:eloka_app/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,7 +51,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;   // creating firebase instance
         Navigator.pushReplacement(
           context, 
           MaterialPageRoute(
-            builder: (context) => HomeScreen()
+            builder: (context) => BottomNavBar()
           )
         );
       }  // if result is not null, we simply call the MaterialpageRoute.
@@ -88,13 +91,13 @@ class Login extends StatelessWidget {
               //),
               SizedBox(height: 40),  //40
               Text(
-                "Buy Peace Of Mind",
-                style: GoogleFonts.raleway(fontSize: 35, color: Colors.black),  //24 //
+                "Buy Peace of Mind",
+                style: GoogleFonts.nunitoSans(fontSize: 35, color: Colors.black, fontWeight: FontWeight.bold),  //24 //
               ),
             ],
           ),
 
-          SizedBox(height: 130,),  //110
+          SizedBox(height: 100,),  //130
 
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -120,7 +123,7 @@ class Login extends StatelessWidget {
                   );
                 },
                 child: Text('Sign Up',
-                  style: GoogleFonts.belleza(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)
+                  style: GoogleFonts.belleza(fontSize: 16, fontWeight: FontWeight.bold, color: defaultColor)
                 ),
               )
             ],
@@ -186,10 +189,28 @@ class _LoginFormState extends State<LoginForm> {
               decoration: InputDecoration(
                 //labelStyle: ,
                 //hintStyle: ,
-                labelStyle: TextStyle(color: Colors.blue),
-                prefixIcon: Icon(CupertinoIcons.mail, color: Colors.blue),
+                labelStyle: TextStyle(color: Colors.grey),
+                prefixIcon: Icon(CupertinoIcons.mail, color: defaultColor),
                 labelText: 'example@domain.com',
-                focusedBorder: border,
+                //focusedBorder: border,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    const Radius.circular(30.0),
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    const Radius.circular(30.0),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: defaultColor, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    const Radius.circular(30.0),
+                  ),
+                ),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -198,7 +219,7 @@ class _LoginFormState extends State<LoginForm> {
                 return null;
               },
               onSaved: (val) {
-                email = val;
+                emailController.text = val!;
               },
               keyboardType: TextInputType.emailAddress,
             ),
@@ -218,10 +239,28 @@ class _LoginFormState extends State<LoginForm> {
               decoration: InputDecoration(
                 //labelStyle: ,
                 //hintStyle: ,
-                labelStyle: TextStyle(color: Colors.blue),
+                labelStyle: TextStyle(color: Colors.grey),
                 labelText: 'password',
-                prefixIcon: Icon(CupertinoIcons.padlock, color: Colors.blue),
-                focusedBorder: border,
+                prefixIcon: Icon(CupertinoIcons.padlock, color: defaultColor),
+                //focusedBorder: border,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    const Radius.circular(30.0),
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    const Radius.circular(30.0),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: defaultColor, width: 2.0),
+                  borderRadius: BorderRadius.all(
+                    const Radius.circular(30.0),
+                  ),
+                ),
                 suffixIcon: GestureDetector(
                   onTap: () {
                     setState(() {
@@ -230,12 +269,13 @@ class _LoginFormState extends State<LoginForm> {
                   },
                   child: Icon(
                     _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: defaultColor,
                   ),
                 ),
               ),
               obscureText: _obscureText,
               onSaved: (val) {
-                password = val;
+                passwordController.text = val!;
               },
               validator: (value) {
                 if (value!.isEmpty) {
@@ -254,39 +294,38 @@ class _LoginFormState extends State<LoginForm> {
               width: double.infinity,     //180
               child: ElevatedButton(
                 onPressed: () {
-                 // _signIn;
-                  //String useremail = emailController.text;
                   // Respond to button press wrt firebase
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     //calls the Auth Helper if textform passess it's validation
                     AuthenticationHelper()
-                    .signIn(email: email!, password: password!)
-                    .then((result) {
-                      Navigator.pushReplacement(
+                    .signIn(email: emailController.text.trim(), password: passwordController.text.trim())
+                    .whenComplete(() {
+                      /*Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => HomeScreen())
-                      );             
+                      );*/
+                      //Get.snackbar('Welcome Back', "signed in successfully!", duration: Duration(seconds: 3), isDismissible: true, colorText: Colors.black, borderRadius: 10);             
                     }
                   );
                 }
                 },
                 style: ElevatedButton.styleFrom(
                   //shadowColor: Colors.white,
-                  primary: Colors.white,
-                  onPrimary: Colors.white,
+                  foregroundColor: Colors.black, 
+                  backgroundColor: Colors.black,
                   //surfaceTintColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                  side: BorderSide(
-                    color: Colors.black,
-                    style: BorderStyle.solid
-                  )
+                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    /*side: BorderSide(
+                      color: Colors.black,
+                      style: BorderStyle.solid
+                    )*/
                   )
                 ),
                 child: Text(
-                  'Login',
-                  style: GoogleFonts.belleza(fontSize: 20, color: Colors.black),
+                  'Sign In',
+                  style: GoogleFonts.nunitoSans(fontSize: 20, color: Colors.white),
                 ),
               ),
             ),
@@ -306,7 +345,7 @@ class _LoginFormState extends State<LoginForm> {
                   MaterialPageRoute(builder: (context) => ResetPassword())
                 ); 
               },
-              child: Text('Forgot Password?', style: GoogleFonts.belleza(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),            
+              child: Text('Forgot Password?', style: GoogleFonts.belleza(fontSize: 16, fontWeight: FontWeight.bold, color: defaultColor)),            
             ),
             SizedBox(height: 20),
             //Google SignIn Button
@@ -328,7 +367,7 @@ class _LoginFormState extends State<LoginForm> {
                   children: [
                     Image.asset('asset/images/google_black.png'),
                     //SizedBox(width: 5), //10                  
-                    Text('SignIn', style: GoogleFonts.raleway(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),                                     
+                    Text('SignIn', style: GoogleFonts.nunitoSans(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)),                                     
                   ],
                 ),
               ),

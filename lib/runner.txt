@@ -121,3 +121,63 @@ Column(
                 )
                   ],
                 ),
+
+                //firebase user widget
+  Widget firebaseUserWidget() {
+    return FutureBuilder<Users?>(
+      future: readUser(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Something went wrong! ${snapshot.error}', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,));
+        }
+        else if (snapshot.hasData) {
+          final users = snapshot.data!;
+          // ignore: unnecessary_null_comparison
+          return buildUser(users);
+        }        
+        else {
+          return Center(
+            child: Text('User not found!', style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),  //CircularProgressIndicator(color: Colors.white)
+          );
+        }
+      },
+    );
+  }
+  Widget buildUser(Users users) => Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    //crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(users.user_name, style: GoogleFonts.belleza(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white,)),
+    ],
+  );
+
+  
+  //CRUD: Firebase createUser Method for creating user's name in Cloud Firestore
+  Future createUser(Users user) async{
+    ///Reference to document
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    user.id = docUser.id;
+    final json = user.toJson();
+
+    ///Create documnet and write data to Firebase
+    await docUser.set(json);
+  }
+
+  //CRUD: Firebase readUsers method for reading all users details as a list at once in app. *not needed atm
+  Stream<List<Users>> readUsers() => FirebaseFirestore.instance
+  .collection('users')
+  .snapshots()
+  .map((snapshot) => 
+  snapshot.docs.map((doc) => Users.fromJson(doc.data())).toList());
+
+  //CRUD: Firebase readUser method that particularly reads a sinngle user details in app
+  Future<Users?> readUser() async{
+    ///Reference to document (get single document ID)
+    final docUser = FirebaseFirestore.instance.collection('users').doc();
+    final snapshot = await docUser.get();
+
+    if (snapshot.exists) {
+      return Users.fromJson(snapshot.data()!);
+    }
+  }
+

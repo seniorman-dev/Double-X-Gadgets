@@ -1,5 +1,6 @@
 import 'package:eloka_app/FirebaseAuth/AuthenticationHelper.dart';
 import 'package:eloka_app/FirebaseAuth/FirebaseLogin.dart';
+import 'package:eloka_app/defaultColor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,11 +15,12 @@ class ResetPassword extends StatefulWidget {
 class _ResetPasswordState extends State<ResetPassword> {
 
   final _formKey = GlobalKey<FormState>(); //very important for TextFormFields
+  final emailController = TextEditingController();
   String? email;
 
   @override
   Widget build(BuildContext context) {
-
+    
     //for TextForm Border Outline
     var border = OutlineInputBorder(
       borderSide: BorderSide(color: Colors.blue, width: 2.0),
@@ -55,9 +57,10 @@ class _ResetPasswordState extends State<ResetPassword> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 20),  //40
-              Text("Let's Get You Back On Track", style: GoogleFonts.raleway(fontSize: 25, color: Colors.black)),
+              Text("Let's Get You Back On Track", style: GoogleFonts.nunitoSans(fontWeight: FontWeight.bold, fontSize: 35, color: Colors.black)),
               SizedBox(height: 150), 
               TextFormField(
+                controller: emailController,
                 autocorrect: true,
                 inputFormatters: [],
                 enableSuggestions: true,
@@ -67,10 +70,28 @@ class _ResetPasswordState extends State<ResetPassword> {
                 decoration: InputDecoration(
                   //labelStyle: ,
                   //hintStyle: ,
-                  labelStyle: TextStyle(color: Colors.blue),
-                  focusedBorder: border,
+                  labelStyle: TextStyle(color: Colors.grey),
+                  //focusedBorder: border,
                   labelText: 'example@domain.com',
-                  prefixIcon: Icon(CupertinoIcons.mail, color: Colors.blue),
+                  prefixIcon: Icon(CupertinoIcons.mail, color: defaultColor),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: defaultColor, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  )
                 ),
                 validator: (value) {
                 if (value!.isEmpty) {
@@ -79,7 +100,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 //return null;
                 },
                 onSaved: (val) {  //onChanged
-                  email = val!;
+                  emailController.text = val!;
                 },
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -96,65 +117,24 @@ class _ResetPasswordState extends State<ResetPassword> {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     //calls the Auth Helper if textform passess it's validation
-                    AuthenticationHelper()
-                      .resetPassword(email: email!);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          duration: Duration(seconds: 3), //newly added
-                          padding: EdgeInsets.all(16),  //newly added
-                          backgroundColor: Colors.white,
-                          dismissDirection: DismissDirection.down,  //endToStart
-                          elevation: 2,  //0
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0))
-                          ),
-                          content: Text(
-                            'Reset Request Approved!\nKindly Check Your Mail.',
-                            style: GoogleFonts.belleza(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-                          ),
-                        ));
-
-
-                      //.then((result) {
-                      //if (result == null) {
-                        //Navigator.pushReplacement(
-                          //context,
-                          //MaterialPageRoute(builder: (context) => Login())
-                        //);
-                      //} 
-                      //else {
-                        //ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //duration: Duration(seconds: 3), //newly added
-                          //padding: EdgeInsets.all(16),  //newly added
-                          //backgroundColor: Colors.white,
-                          //dismissDirection: DismissDirection.down,  //endToStart
-                          //elevation: 2,  //0
-                          //shape: RoundedRectangleBorder(
-                            //borderRadius: BorderRadius.all(Radius.circular(10.0))
-                          //),
-                          //content: Text(
-                            //result,
-                            //style: GoogleFonts.belleza(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-                          //),
-                        //));
-                      //}
-                    //});
-                  }
+                    AuthenticationHelper().resetPassword(email: emailController.text.trim());
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     //shadowColor: Colors.white,
                     //primary: Colors.white,
                     //surfaceTintColor: Colors.white,
-                    primary: Colors.white,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                      side: BorderSide(
+                      /*side: BorderSide(
                         color: Colors.black,
                         style: BorderStyle.solid
-                      )
+                      )*/
                     )
                   ),
-                  child: Text('Reset Password', style: GoogleFonts.belleza(fontSize: 20, color: Colors.black))
+                  child: Text('Reset Password', style: GoogleFonts.nunitoSans(fontSize: 20, color: Colors.white))
                 ),
               ),
 

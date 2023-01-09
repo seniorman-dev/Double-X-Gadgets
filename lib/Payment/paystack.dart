@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_paystack_client/flutter_paystack_client.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 
 
@@ -50,9 +51,11 @@ class _PaystackUiState extends State<PaystackUi> {
         //centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.black,
+        automaticallyImplyLeading: false,
         leading: IconButton(
           onPressed:() {
-            Navigator.of(context).pop();
+            Get.back();
+            //Navigator.pop(context);
           },
           icon: Icon(CupertinoIcons.back, color: Colors.white)    //Colors.indigoAccent  //Colors.black,
         ),
@@ -75,6 +78,18 @@ class _PaystackUiState extends State<PaystackUi> {
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                   focusedBorder: border,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  ),
                   labelStyle: TextStyle(color: Colors.indigo),
                   labelText: 'verified email',
                   prefixIcon: Icon(CupertinoIcons.mail, color: Colors.indigo),
@@ -102,6 +117,18 @@ class _PaystackUiState extends State<PaystackUi> {
                 cursorColor: Colors.white,
                 decoration: InputDecoration(
                   focusedBorder: border,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red, width: 2.0),
+                    borderRadius: BorderRadius.all(
+                      const Radius.circular(30.0),
+                    ),
+                  ),
                   labelText: 'enter the amount below...',
                   labelStyle: TextStyle(color: Colors.indigo),
                   prefixIcon: Icon(CupertinoIcons.checkmark_seal, color: Colors.indigo),
@@ -168,17 +195,17 @@ class _PaystackUiState extends State<PaystackUi> {
                   style: ElevatedButton.styleFrom(
                     //shadowColor: Colors.white,
                     //surfaceTintColor: Colors.white,
-                    primary: Colors.transparent,
-                    onPrimary: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15.0))
                     ),
-                    side: BorderSide(
+                    /*side: BorderSide(
                       color: Colors.white,
                       style: BorderStyle.solid
-                    )
+                    )*/
                   ),
-                  child: Text('Pay N${ccart.totalString}', style: GoogleFonts.belleza(fontSize: 20, color: Colors.white))
+                  child: Text('Pay N${ccart.totalString}', style: GoogleFonts.belleza(fontSize: 20, color: Colors.black))
                 ),
               ),
 
